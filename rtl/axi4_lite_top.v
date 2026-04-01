@@ -2,12 +2,12 @@ module axi4_lite_top #(
     parameter DATA_WIDTH = 32,
     parameter ADDR_WIDTH = 32,
     parameter MEM_DEPTH  = 16,
-
-    parameter MODE = 0   // 0: SLAVE_TEST, 1: MASTER_TEST
+    parameter MODE = 1
 )(
     input  wire ACLK,
     input  wire ARESETn,
-    
+
+    // AXI interface (fixed directions)
     input  wire [ADDR_WIDTH-1:0] AWADDR,
     input  wire [2:0]            AWPROT,
     input  wire                  AWVALID,
@@ -30,29 +30,12 @@ module axi4_lite_top #(
     output wire [DATA_WIDTH-1:0] RDATA,
     output wire [1:0]            RRESP,
     output wire                  RVALID,
-    input  wire                  RREADY,
-
-    input  wire                       wr_req,
-    input  wire [ADDR_WIDTH-1:0]      wr_addr,
-    input  wire [DATA_WIDTH-1:0]      wr_data,
-    input  wire [(DATA_WIDTH/8)-1:0]  wr_strb,
-    input  wire [2:0]                 wr_prot,
-    output wire                       wr_done,
-    output wire [1:0]                 wr_resp,
-
-    input  wire                       rd_req,
-    input  wire [ADDR_WIDTH-1:0]      rd_addr,
-    input  wire [2:0]                 rd_prot,
-    output wire                       rd_done,
-    output wire [DATA_WIDTH-1:0]      rd_data,
-    output wire [1:0]                 rd_resp
+    input  wire                  RREADY
 );
 
 generate
 
-//MODE 0: SLAVE TEST
-    
-if (MODE == 0) begin : SLAVE_MODE
+if (MODE == 0) begin
 
     axi4_lite_slave #(
         .DATA_WIDTH(DATA_WIDTH),
@@ -87,17 +70,7 @@ if (MODE == 0) begin : SLAVE_MODE
         .RREADY(RREADY)
     );
 
-    assign wr_done = 1'b0;
-    assign wr_resp = 2'b00;
-    assign rd_done = 1'b0;
-    assign rd_data = {DATA_WIDTH{1'b0}};
-    assign rd_resp = 2'b00;
-
-end
-
-// MODE 1: MASTER TEST
-    
-else begin : MASTER_MODE
+end else begin
 
     axi4_lite_master #(
         .DATA_WIDTH(DATA_WIDTH),
@@ -128,22 +101,7 @@ else begin : MASTER_MODE
         .RDATA(RDATA),
         .RRESP(RRESP),
         .RVALID(RVALID),
-        .RREADY(RREADY),
-
-        .wr_req(wr_req),
-        .wr_addr(wr_addr),
-        .wr_data(wr_data),
-        .wr_strb(wr_strb),
-        .wr_prot(wr_prot),
-        .wr_done(wr_done),
-        .wr_resp(wr_resp),
-
-        .rd_req(rd_req),
-        .rd_addr(rd_addr),
-        .rd_prot(rd_prot),
-        .rd_done(rd_done),
-        .rd_data(rd_data),
-        .rd_resp(rd_resp)
+        .RREADY(RREADY)
     );
 
 end
