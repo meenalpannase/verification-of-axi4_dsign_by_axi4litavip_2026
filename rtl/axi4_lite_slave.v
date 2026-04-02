@@ -8,7 +8,7 @@ module axi4_lite_slave #(
     input  wire                       ARESETn,
  
     input  wire [ADDR_WIDTH-1:0]      AWADDR,
-    input  wire [2:0]                 AWPROT,
+  //  input  wire [2:0]                 AWPROT,
     input  wire                       AWVALID,
     output reg                        AWREADY,
  
@@ -22,7 +22,7 @@ module axi4_lite_slave #(
     input  wire                       BREADY,
  
     input  wire [ADDR_WIDTH-1:0]      ARADDR,
-    input  wire [2:0]                 ARPROT,
+  //  input  wire [2:0]                 ARPROT,
     input  wire                       ARVALID,
     output reg                        ARREADY,
  
@@ -39,7 +39,7 @@ localparam [1:0]
     RESP_SLVERR = 2'b10,
     RESP_DECERR = 2'b11;
  
-wire [2:0] slave_prot = DEFAULT_PROT;
+//wire [2:0] slave_prot = DEFAULT_PROT;
  
 integer i;
 reg [DATA_WIDTH-1:0] reg_file [0:MEM_DEPTH-1];
@@ -58,7 +58,7 @@ reg aw_done, w_done;
 reg [ADDR_WIDTH-1:0]     wr_addr_lat;
 reg [DATA_WIDTH-1:0]     wr_data_lat;
 reg [(DATA_WIDTH/8)-1:0] wr_strb_lat;
-reg [2:0]                wr_prot_lat;
+//reg [2:0]                wr_prot_lat;
 reg                      wr_addr_ok;
 reg                      wr_addr_ro;
  
@@ -72,7 +72,7 @@ always @(posedge ACLK) begin
         wr_strb_lat <= {(DATA_WIDTH/8){1'b0}};
         wr_addr_ok  <= 1'b0;
         wr_addr_ro  <= 1'b0;
-        wr_prot_lat <= 3'b000;
+    //    wr_prot_lat <= 3'b000;
     end else begin
         if (wr_state == W_RESP && BVALID && BREADY) begin
             aw_done <= 1'b0;
@@ -82,7 +82,7 @@ always @(posedge ACLK) begin
         if (AWVALID && AWREADY) begin
             aw_done     <= 1'b1;
             wr_addr_lat <= AWADDR;
-            wr_prot_lat <= AWPROT;
+     //       wr_prot_lat <= AWPROT;
            
             wr_addr_ok  <= (AWADDR[ADDR_WIDTH-1:2] < MEM_DEPTH);
             wr_addr_ro  <= (AWADDR[ADDR_WIDTH-1:2] < MEM_DEPTH) &&
@@ -178,7 +178,7 @@ localparam [1:0]
  
 reg [1:0] rd_state, n_rd_state;
 reg [ADDR_WIDTH-1:0] rd_addr_lat;
-reg [2:0]            rd_prot_lat;
+//reg [2:0]            rd_prot_lat;
 reg                  rd_addr_ok;
 reg                  rd_addr_wo;
  
@@ -211,7 +211,7 @@ always @(posedge ACLK) begin
         rd_addr_lat <= {ADDR_WIDTH{1'b0}};
         rd_addr_ok  <= 1'b0;
         rd_addr_wo  <= 1'b0;
-        rd_prot_lat <= 3'b000;
+     //   rd_prot_lat <= 3'b000;
     end else begin
         case (rd_state)
  
@@ -225,7 +225,7 @@ always @(posedge ACLK) begin
                 ARREADY <= 1'b1;
                 if (ARVALID && ARREADY) begin
                     rd_addr_lat <= ARADDR;
-                    rd_prot_lat <= ARPROT;
+           //         rd_prot_lat <= ARPROT;
                     
                     rd_addr_ok  <= (ARADDR[ADDR_WIDTH-1:2] < MEM_DEPTH);
                     rd_addr_wo  <= (ARADDR[ADDR_WIDTH-1:2] < MEM_DEPTH) &&
