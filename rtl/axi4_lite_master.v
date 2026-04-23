@@ -78,7 +78,7 @@ localparam [2:0]
 reg [2:0] wr_state, n_wr_state;
 
 
-always @(posedge ACLK) begin
+always @(posedge ACLK or negedge ARESETn) begin
     if (!ARESETn) wr_state <= W_IDLE;
     else          wr_state <= n_wr_state;
 end
@@ -101,7 +101,7 @@ always @(*) begin
 end
 
 
-always @(posedge ACLK) begin
+always @(posedge ACLK or negedge ARESETn) begin
     if (!ARESETn) begin
         AWADDR  <= {ADDR_WIDTH{1'b0}};
         AWPROT  <= DEFAULT_PROT;        
@@ -192,7 +192,7 @@ localparam [1:0]
 reg [1:0] rd_state, n_rd_state;
 
 
-always @(posedge ACLK) begin
+always @(posedge ACLK or negedge ARESETn) begin
     if (!ARESETn) rd_state <= R_IDLE;
     else          rd_state <= n_rd_state;
 end
@@ -209,7 +209,7 @@ always @(*) begin
 end
 
 
-always @(posedge ACLK) begin
+always @(posedge ACLK or negedge ARESETn) begin
     if (!ARESETn) begin
         ARADDR  <= {ADDR_WIDTH{1'b0}};
         ARPROT  <= DEFAULT_PROT;         
